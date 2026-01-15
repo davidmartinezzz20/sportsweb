@@ -1,0 +1,45 @@
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ee:lts
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9443:9443
+
+  mongo:
+    image: mongo
+    container_name: mongo-container
+    ports:
+      - "27030:27030"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: backend-web-container
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27030/mydatabase
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    container_name: frontend-web-container
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  portainer_data:
+    name: portainer_data
+  mongo-data:
+
+networks:
+  default:
+    name: portainer_network
