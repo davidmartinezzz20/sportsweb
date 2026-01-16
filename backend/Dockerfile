@@ -11,6 +11,7 @@ COPY package*.json ./
 
 # Installing dependencies
 RUN npm install
+RUN npm install express mongoose dotenv nodemon
 
 # Copy the rest of the app's source code
 COPY . .
